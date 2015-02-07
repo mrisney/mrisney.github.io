@@ -497,11 +497,11 @@ var SlopePhysics;
             this.clearSurfaces();
             this.removeBodies();
             var that = this;
-            document.addEventListener("pointEditListener", function () {
-                that.clearSurfaces();
-                var points = event.recordset;
+            var listener = function (event) {
+                var points = event.detail;
                 that.setSurfacePoints(points);
-            });
+            };
+            document.addEventListener("pointEditListener", listener);
             SlopePhysics.inEditMode = true;
             SlopePhysics.curveControl.drawLine();
         };
