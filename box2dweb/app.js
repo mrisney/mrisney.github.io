@@ -376,7 +376,7 @@ var Curves;
                 event.initCustomEvent('pointEditListener', true, true, newpoints);
                 document.dispatchEvent(event);
             });
-            background.on('mousemove', function () {
+            background.on('mousemove touchmove', function () {
                 if (!isMouseDown) {
                     return;
                 }
