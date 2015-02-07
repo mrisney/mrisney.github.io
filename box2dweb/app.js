@@ -477,6 +477,7 @@ var SlopePhysics;
             window.addEventListener("orientationchange", this.onResizeHandler.bind(this), false);
             var lineToleranceSlider = document.getElementById("line-tolerance-range");
             lineToleranceSlider.addEventListener("mouseup", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
+            lineToleranceSlider.addEventListener("touchend", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
             var reloadButton = document.getElementById("btnReload");
             reloadButton.addEventListener("click", this.createBall.bind(this), false);
             var settingsButton = document.getElementById("btnSettings");
