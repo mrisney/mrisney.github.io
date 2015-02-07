@@ -246,7 +246,7 @@ var Curves;
                     strokeWidth: 2,
                     draggable: true
                 });
-                kineticControlPoint.on('dragstart dragmove', function () {
+                kineticControlPoint.on('dragstart dragmove touchstart touchmove', function () {
                     Curves.curveControl.updateControlLines();
                 });
                 Curves.kineticControlPoints.push(kineticControlPoint);
