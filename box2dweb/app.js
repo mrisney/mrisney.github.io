@@ -349,7 +349,7 @@ var Curves;
             var newline;
             var points = new Array();
             var tempPoints = [];
-            background.on('mousedown', function () {
+            background.on('mousedown touchstart', function () {
                 isMouseDown = true;
                 console.log('mouse down from curve control');
                 tempPoints = [];
@@ -367,7 +367,7 @@ var Curves;
                 layer.add(line);
                 newline = line;
             });
-            background.on('mouseup', function () {
+            background.on('mouseup touchend', function () {
                 isMouseDown = false;
                 console.log('mouse up from curve control');
                 this.curvePoints = Curves.polylineSimplify.simplify(points, Curves.lineTolerance, true);
@@ -493,7 +493,6 @@ var SlopePhysics;
             SlopePhysics.inEditMode = !SlopePhysics.inEditMode;
         };
         Main.prototype.createDrawnSurface = function () {
-            console.log("drawing surface");
             this.clearSurfaces();
             this.removeBodies();
             var that = this;
