@@ -222,10 +222,8 @@ var Curves;
             });
             return controlPoint;
         };
-        CurveControl.prototype.setLineTolerance = function (event) {
-            var toleranceSlider = document.getElementById("line-tolerance-range");
-            Curves.lineTolerance = +toleranceSlider.value;
-            Curves.simplifiedPoints = Curves.polylineSimplify.simplify(Curves.drawPoints, Curves.lineTolerance, true);
+        CurveControl.prototype.setLineTolerance = function (lineTolerance) {
+            Curves.simplifiedPoints = Curves.polylineSimplify.simplify(Curves.drawPoints, lineTolerance, true);
             this.curvePoints = Curves.simplifiedPoints;
             Curves.stage.clear();
             Curves.controlLineLayer.removeChildren();
@@ -246,7 +244,7 @@ var Curves;
                     strokeWidth: 2,
                     draggable: true
                 });
-                kineticControlPoint.on('dragstart dragmove touchstart touchmove', function () {
+                kineticControlPoint.on('dragmove  touchmove', function () {
                     Curves.curveControl.updateControlLines();
                 });
                 Curves.kineticControlPoints.push(kineticControlPoint);
@@ -396,12 +394,16 @@ var Curves;
 })(Curves || (Curves = {}));
 window.addEventListener('load', function () {
     var canvas = document.getElementById('surface');
-    canvas.width = (document.documentElement.offsetWidth - 25);
+    canvas.width = (document.documentElement.offsetWidth - 150);
     canvas.height = (document.documentElement.clientHeight - 150);
     var slopePhysics = new SlopePhysics.Main(canvas);
-    var gravity = document.getElementById("gravity-range");
-    gravity.addEventListener('mouseup', function () {
-        slopePhysics.changeGravity(this.value);
+    var gravityRange = new Slider("#gravity-range");
+    gravityRange.on("slide", function (event) {
+        slopePhysics.changeGravity(event.value);
+    });
+    var lineSimplification = new Slider("#line-simplification");
+    lineSimplification.on("slide", function (event) {
+        slopePhysics.lineSimplificaton(event.value);
     });
 });
 var SlopePhysics;
@@ -475,11 +477,6 @@ var SlopePhysics;
             createjs.Ticker.addEventListener('tick', this.tick);
             window.addEventListener("resize", this.onResizeHandler.bind(this), false);
             window.addEventListener("orientationchange", this.onResizeHandler.bind(this), false);
-            var lineToleranceSlider = document.getElementById("line-tolerance-range");
-            lineToleranceSlider.addEventListener("mouseup", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
-            lineToleranceSlider.addEventListener("touchstart", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
-            lineToleranceSlider.addEventListener("touchend", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
-            lineToleranceSlider.addEventListener("change", SlopePhysics.curveControl.setLineTolerance.bind(this), false);
             var reloadButton = document.getElementById("btnReload");
             reloadButton.addEventListener("click", this.createBall.bind(this), false);
             var settingsButton = document.getElementById("btnSettings");
@@ -554,6 +551,9 @@ var SlopePhysics;
         Main.prototype.changeGravity = function (value) {
             this.gravity = value * 10;
             SlopePhysics.world.SetGravity(new b2m.b2Vec2(0, this.gravity));
+        };
+        Main.prototype.lineSimplificaton = function (value) {
+            SlopePhysics.curveControl.setLineTolerance(value);
         };
         Main.prototype.setSurfacePoints = function (points) {
             var surfaceDef = new b2d.b2BodyDef();
