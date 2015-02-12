@@ -392,6 +392,193 @@ var Curves;
     })();
     Curves.CurveControl = CurveControl;
 })(Curves || (Curves = {}));
+var Figure;
+(function (Figure) {
+    var b2d = Box2D.Dynamics;
+    var b2s = Box2D.Collision.Shapes;
+    var b2j = Box2D.Dynamics.Joints;
+    var body, wheel1, wheel2;
+    var sprite;
+    var stage;
+    var FigureControl = (function () {
+        function FigureControl(createdStage, world, scale) {
+            stage = createdStage;
+            this.world = world;
+            this.scale = scale;
+        }
+        FigureControl.prototype.p2m = function (n) {
+            return n / this.scale;
+        };
+        FigureControl.prototype.animate = function (event) {
+            var direction;
+            var deltaY = wheel2.GetPosition().y - wheel1.GetPosition().y;
+            var deltaX = wheel2.GetPosition().x - wheel1.GetPosition().x;
+            var rotationAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+            sprite.regX = 70;
+            sprite.regY = 125;
+            sprite.rotation = rotationAngle;
+            sprite.x = (body.GetPosition().x * 30);
+            sprite.y = (body.GetPosition().y * 30);
+            console.log("sprite location =" + sprite.x + "," + sprite.y);
+            var i = 1;
+            var frame_count = 9;
+            var left = _.range(0, 9);
+            var right = _.range(10, 19);
+            var left_ollie = _.range(20, 34);
+            var right_ollie = _.range(35, 49);
+            var left_front_360 = _.range(50, 69);
+            var right_front_360 = _.range(70, 97);
+            var left_crash = _.range(98, 119);
+            var right_crash = _.range(121, 139);
+            var _action = "";
+            var action = "";
+            var velocity = Math.round(body.GetLinearVelocity().x * 100) / 100;
+            (velocity < 0) ? direction = "left" : direction = "right";
+            console.log("direction=" + direction);
+            if (_action) {
+                action = direction.concat(_action);
+            }
+            else {
+                action = direction;
+            }
+            console.log("action = " + action);
+            switch (action) {
+                case "left":
+                    console.log("going to the left " + i);
+                    frame_count = 9;
+                    sprite.gotoAndPlay(left[i]);
+                    i++;
+                    break;
+                case "right":
+                    console.log("going to the right " + i);
+                    frame_count = 9;
+                    sprite.gotoAndPlay(right[i]);
+                    i++;
+                    break;
+                case "left_ollie":
+                    frame_count = 14;
+                    sprite.gotoAndPlay(left_ollie[i]);
+                    break;
+                case "right_ollie":
+                    frame_count = 14;
+                    sprite.gotoAndPlay(right_ollie[i]);
+                    break;
+                case "left_front_360":
+                    frame_count = 19;
+                    sprite.gotoAndPlay(left_front_360[i]);
+                    break;
+                case "right_front_360":
+                    frame_count = 19;
+                    sprite.gotoAndPlay(right_front_360[i]);
+                    break;
+                case "left_crash":
+                    frame_count = 18;
+                    sprite.gotoAndPlay(left_crash[i]);
+                    break;
+                case "right_crash":
+                    frame_count = 18;
+                    sprite.gotoAndPlay(right_crash[i]);
+                    break;
+                default:
+                    sprite.gotoAndPlay(left[i]);
+            }
+            i++;
+            if (i >= frame_count) {
+                i = 0;
+                _action = null;
+            }
+            var speed = body.GetLinearVelocity().x;
+            speed = Math.floor(speed);
+            speed = Math.abs(speed);
+            stage.update();
+        };
+        FigureControl.prototype.createBall = function (x, y) {
+            var ballDef = new b2d.b2BodyDef();
+            ballDef.type = b2d.b2Body.b2_dynamicBody;
+            ballDef.position.x = x / this.scale;
+            ballDef.position.y = y / this.scale;
+            ballDef.userData = 'ball';
+            var fixDef = new b2d.b2FixtureDef();
+            fixDef.userData = 'ball';
+            fixDef.density = 0.5;
+            fixDef.friction = 0.5;
+            fixDef.restitution = 0.9;
+            fixDef.shape = new b2s.b2CircleShape(30 / this.scale);
+            fixDef.userData = 'ball';
+            var body = this.world.CreateBody(ballDef);
+            body.CreateFixture(fixDef);
+            return body;
+        };
+        FigureControl.prototype.createSpritePlatform = function (x, y) {
+            var rectangleDef = new b2d.b2BodyDef();
+            rectangleDef.type = b2d.b2Body.b2_dynamicBody;
+            rectangleDef.position.x = x / this.scale;
+            rectangleDef.position.y = y / this.scale;
+            body = this.world.CreateBody(rectangleDef);
+            var fixDef = new b2d.b2FixtureDef();
+            var rectanglurShape = new b2s.b2PolygonShape();
+            rectanglurShape.SetAsBox(1.0, 0.1);
+            fixDef.shape = rectanglurShape;
+            fixDef.density = 2.0;
+            fixDef.friction = 0.0;
+            fixDef.restitution = 0.3;
+            body.CreateFixture(fixDef);
+            var wheelDef = new b2d.b2BodyDef();
+            wheelDef.type = b2d.b2Body.b2_dynamicBody;
+            wheelDef.position.x = x / this.scale;
+            wheelDef.position.y = y / this.scale;
+            var wheelFixDef = new b2d.b2FixtureDef;
+            wheelFixDef.density = 2.0;
+            wheelFixDef.friction = 0.0;
+            wheelFixDef.restitution = 0.3;
+            wheelFixDef.shape = new b2s.b2CircleShape(0.4);
+            wheel1 = this.world.CreateBody(wheelDef);
+            wheel1.CreateFixture(wheelFixDef);
+            wheel2 = this.world.CreateBody(wheelDef);
+            wheel2.CreateFixture(wheelFixDef);
+            var jointDef = new b2j.b2RevoluteJointDef();
+            jointDef.bodyA = body;
+            jointDef.bodyB = wheel1;
+            jointDef.localAnchorA.Set(-1.0, 0);
+            this.world.CreateJoint(jointDef);
+            jointDef.bodyA = body;
+            jointDef.bodyB = wheel2;
+            jointDef.localAnchorA.Set(1.0, 0);
+            this.world.CreateJoint(jointDef);
+            return body;
+        };
+        FigureControl.prototype.createSnowboarder = function (x, y) {
+            var snowboarderSpriteSheetData = {
+                images: ["images/snowboarder.png"],
+                frames: {
+                    width: 151,
+                    height: 145,
+                    count: 140,
+                },
+                animations: {
+                    snowboarder_left: [0, 9],
+                    snowboarder_right: [10, 19],
+                    snowboarder_left_trick1: [20, 34, "snowboarder_left", 2],
+                    snowboarder_right_trick1: [35, 49, "snowboarder_right", 2],
+                    snowboarder_left_trick2: [50, 69, "snowboarder_left", 2],
+                    snowboarder_right_trick2: [70, 97, "snowboarder_right", 2],
+                    snowboarder_left_crash: [98, 119, false],
+                    snowboarder_right_crash: [121, 139, false]
+                }
+            };
+            var snowboarderSpriteSheet = new createjs.SpriteSheet(snowboarderSpriteSheetData);
+            sprite = new createjs.Sprite(snowboarderSpriteSheet);
+            sprite.tickEnabled = true;
+            stage.addChild(sprite);
+            createjs.Ticker.setFPS(10);
+            createjs.Ticker.on("tick", this.animate, sprite);
+            body = this.createSpritePlatform(x, y);
+            return sprite;
+        };
+        return FigureControl;
+    })();
+    Figure.FigureControl = FigureControl;
+})(Figure || (Figure = {}));
 window.addEventListener('load', function () {
     var canvas = document.getElementById('surface');
     canvas.width = (document.documentElement.offsetWidth - 150);
@@ -421,6 +608,7 @@ var SlopePhysics;
     SlopePhysics.chaikinCurve;
     SlopePhysics.polylineSimplify;
     SlopePhysics.bezierCurve;
+    SlopePhysics.figureControl;
     var lineTolerance = 1.0;
     var bodies = new Array();
     var surfaces = new Array();
@@ -433,6 +621,13 @@ var SlopePhysics;
         function Main(canvas) {
             var _this = this;
             this.gravity = 9.81;
+            this.createFigure = function () {
+                console.log('creating figure ....');
+                _this.removeBodies();
+                var x = 250;
+                var y = 50;
+                var sprite = SlopePhysics.figureControl.createSnowboarder(x, y);
+            };
             this.createBall = function () {
                 console.log('curve control points = ' + SlopePhysics.curveControl.getCurvePoints().length);
                 _this.removeBodies();
@@ -472,13 +667,14 @@ var SlopePhysics;
             SlopePhysics.bezierCurve = new PolygonSubdivision.BezierCurve;
             SlopePhysics.curveControl = new Curves.CurveControl('container', stageW, stageH);
             SlopePhysics.world = new b2d.b2World(new b2m.b2Vec2(0, this.gravity * 10), true);
+            SlopePhysics.figureControl = new Figure.FigureControl(stage, SlopePhysics.world, SlopePhysics.scale);
             createjs.Ticker.setFPS(60);
             createjs.Ticker.useRAF = true;
             createjs.Ticker.addEventListener('tick', this.tick);
             window.addEventListener("resize", this.onResizeHandler.bind(this), false);
             window.addEventListener("orientationchange", this.onResizeHandler.bind(this), false);
             var reloadButton = document.getElementById("btnReload");
-            reloadButton.addEventListener("click", this.createBall.bind(this), false);
+            reloadButton.addEventListener("click", this.createFigure.bind(this), false);
             var settingsButton = document.getElementById("btnSettings");
             settingsButton.addEventListener("click", this.settings.bind(this), false);
             var drawButton = document.getElementById("btnDraw");
@@ -497,6 +693,7 @@ var SlopePhysics;
             this.removeBodies();
             var that = this;
             var listener = function (event) {
+                that.clearSurfaces();
                 var points = event.detail;
                 that.setSurfacePoints(points);
             };
@@ -505,8 +702,8 @@ var SlopePhysics;
             SlopePhysics.curveControl.drawLine();
         };
         Main.prototype.createBezierSurface = function () {
-            this.clearSurfaces();
             this.removeBodies();
+            this.clearSurfaces();
             var width = this.canvas.width;
             var height = this.canvas.height;
             var pt1x = 0;
@@ -546,6 +743,7 @@ var SlopePhysics;
         Main.prototype.tick = function () {
             stage.update();
             draw();
+            SlopePhysics.world.DrawDebugData();
             SlopePhysics.world.Step(1 / SlopePhysics.step, 10, 10);
         };
         Main.prototype.changeGravity = function (value) {
@@ -553,6 +751,7 @@ var SlopePhysics;
             SlopePhysics.world.SetGravity(new b2m.b2Vec2(0, this.gravity));
         };
         Main.prototype.lineSimplificaton = function (value) {
+            this.clearSurfaces();
             SlopePhysics.curveControl.setLineTolerance(value);
         };
         Main.prototype.setSurfacePoints = function (points) {
@@ -681,6 +880,24 @@ var SlopePhysics;
                         ctx.translate(-position.x * SlopePhysics.scale, -position.y * SlopePhysics.scale);
                         ctx.beginPath();
                         ctx.arc(position.x * SlopePhysics.scale, position.y * SlopePhysics.scale, radius * SlopePhysics.scale, 0, 2 * Math.PI, false);
+                        ctx.closePath();
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = "rgb(0, 0, 0)";
+                        ctx.fillStyle = "rgb(255, 255, 255)";
+                        ctx.stroke();
+                        ctx.fill();
+                        ctx.restore();
+                    }
+                    if (shapeType == b2s.b2Shape.e_polygonShape) {
+                        console.log('detected polygon');
+                        var position = body.GetPosition();
+                        var angle = body.GetAngle() * (180 / Math.PI);
+                        var polygonShape = shape;
+                        ctx.save();
+                        ctx.translate(position.x * SlopePhysics.scale, position.y * SlopePhysics.scale);
+                        ctx.rotate(angle * (Math.PI / 180));
+                        ctx.translate(-position.x * SlopePhysics.scale, -position.y * SlopePhysics.scale);
+                        ctx.beginPath();
                         ctx.closePath();
                         ctx.lineWidth = 1;
                         ctx.strokeStyle = "rgb(0, 0, 0)";
