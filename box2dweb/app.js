@@ -583,9 +583,17 @@ window.ondevicemotion = function (event) {
     var accelerationX = event.accelerationIncludingGravity.x + "";
     var accelerationY = event.accelerationIncludingGravity.y + "";
     var accelerationZ = event.accelerationIncludingGravity.z + "";
+    var ralpha = event.rotationRate.alpha + "";
+    var rbeta = event.rotationRate.beta + "";
+    var rgamma = event.rotationRate.gamma + "";
+    var interval = event.interval + "";
     document.getElementById("varx").innerHTML = accelerationX;
     document.getElementById("vary").innerHTML = accelerationY;
     document.getElementById("varz").innerHTML = accelerationZ;
+    document.getElementById("ralpha").innerHTML = ralpha;
+    document.getElementById("rbeta").innerHTML = rbeta;
+    document.getElementById("rgamma").innerHTML = rgamma;
+    document.getElementById("interval").innerHTML = interval;
 };
 window.addEventListener('load', function () {
     var canvas = document.getElementById('surface');
@@ -812,7 +820,7 @@ var SlopePhysics;
     })();
     SlopePhysics.Main = Main;
     function draw() {
-        var canvas = document.getElementById('container');
+        var canvas = document.getElementById('surface');
         var ctx = canvas.getContext('2d');
         var deletionBuffer = 4;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
