@@ -579,6 +579,14 @@ var Figure;
     })();
     Figure.FigureControl = FigureControl;
 })(Figure || (Figure = {}));
+window.ondevicemotion = function (event) {
+    var accelerationX = event.accelerationIncludingGravity.x + "";
+    var accelerationY = event.accelerationIncludingGravity.y + "";
+    var accelerationZ = event.accelerationIncludingGravity.z + "";
+    document.getElementById("varx").innerHTML = accelerationX;
+    document.getElementById("vary").innerHTML = accelerationY;
+    document.getElementById("varz").innerHTML = accelerationZ;
+};
 window.addEventListener('load', function () {
     var canvas = document.getElementById('surface');
     canvas.width = (document.documentElement.offsetWidth - 150);
@@ -804,7 +812,7 @@ var SlopePhysics;
     })();
     SlopePhysics.Main = Main;
     function draw() {
-        var canvas = document.getElementById('surface');
+        var canvas = document.getElementById('container');
         var ctx = canvas.getContext('2d');
         var deletionBuffer = 4;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
