@@ -697,6 +697,13 @@ var SlopePhysics;
             drawButton.addEventListener("click", this.createDrawnSurface.bind(this), false);
             var bezierButton = document.getElementById("btnBezier");
             bezierButton.addEventListener("click", this.createBezierSurface.bind(this), false);
+            window.addEventListener('deviceorientation', function (eventData) {
+                var LR = eventData.gamma;
+                var FB = eventData.beta;
+                var newXGravity = Math.round(LR / 2);
+                var newYGravity = Math.round(FB / 2);
+                SlopePhysics.world.SetGravity(new b2m.b2Vec2(newXGravity, newYGravity));
+            }, false);
         }
         Main.prototype.settings = function () {
             if (!SlopePhysics.inEditMode) {
