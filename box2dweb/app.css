@@ -40,7 +40,7 @@ input[type='range']::-moz-range-thumb {
 }
 
 #gravity-range .slider-selection {
-            background: #BABABA;
+            background: #999;
 }
 
 .icon-bezier-curve { 

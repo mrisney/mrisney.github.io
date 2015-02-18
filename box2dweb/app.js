@@ -394,22 +394,61 @@ var Curves;
 })(Curves || (Curves = {}));
 var Figure;
 (function (Figure) {
+    var b2m = Box2D.Common.Math;
     var b2d = Box2D.Dynamics;
     var b2s = Box2D.Collision.Shapes;
     var b2j = Box2D.Dynamics.Joints;
     var body, wheel1, wheel2;
     var sprite;
     var stage;
+    var frameCntr = 0;
+    var _action;
     var FigureControl = (function () {
         function FigureControl(createdStage, world, scale) {
+            var _this = this;
+            this.impulse = function () {
+                console.log("pushing figure" + body.GetPosition().x);
+                var power = 30;
+                var deltaY = wheel2.GetPosition().y - wheel1.GetPosition().y;
+                var deltaX = wheel2.GetPosition().x - wheel1.GetPosition().x;
+                var degrees = Math.atan2(deltaY, deltaX) / Math.PI;
+                body.ApplyImpulse(new b2m.b2Vec2(Math.cos(degrees * (Math.PI / 180)) * power, Math.sin(degrees * (Math.PI / 180)) * power), body.GetWorldCenter());
+            };
+            this.stopMotion = function () {
+                console.log("stopping figure" + body.GetPosition().x);
+                body.ApplyForce(body.GetMass() * -_this.world.GetGravity(), body.GetWorldCenter());
+                body.SetLinearDamping(0);
+                body.SetAngularDamping(0);
+                body.SetAngularVelocity(0);
+                body.SetLinearVelocity(new b2m.b2Vec2(0, 0));
+                body.SetSleepingAllowed(true);
+                body.SetAwake(false);
+                wheel1.ApplyForce(wheel1.GetMass() * -_this.world.GetGravity(), wheel1.GetWorldCenter());
+                wheel1.SetLinearDamping(0);
+                wheel1.SetAngularDamping(0);
+                wheel1.SetAngularVelocity(0);
+                wheel1.SetLinearVelocity(new b2m.b2Vec2(0, 0));
+                wheel1.SetSleepingAllowed(true);
+                wheel1.SetAwake(false);
+                wheel2.SetLinearDamping(0);
+                wheel2.SetAngularDamping(0);
+                wheel2.SetAngularVelocity(0);
+                wheel2.SetLinearVelocity(new b2m.b2Vec2(0, 0));
+                wheel2.SetSleepingAllowed(true);
+                wheel2.SetAwake(false);
+                console.log("figure stopped");
+            };
             stage = createdStage;
             this.world = world;
             this.scale = scale;
         }
+        FigureControl.prototype.setAction = function (action) {
+            _action = action;
+        };
         FigureControl.prototype.p2m = function (n) {
             return n / this.scale;
         };
-        FigureControl.prototype.animate = function (event) {
+        FigureControl.prototype.animateSnowboarder = function (event) {
             var direction;
             var deltaY = wheel2.GetPosition().y - wheel1.GetPosition().y;
             var deltaX = wheel2.GetPosition().x - wheel1.GetPosition().x;
@@ -419,8 +458,9 @@ var Figure;
             sprite.rotation = rotationAngle;
             sprite.x = (body.GetPosition().x * 30);
             sprite.y = (body.GetPosition().y * 30);
-            console.log("sprite location =" + sprite.x + "," + sprite.y);
-            var i = 1;
+            sprite.scaleX = .5;
+            sprite.scaleY = .5;
+            var i = frameCntr;
             var frame_count = 9;
             var left = _.range(0, 9);
             var right = _.range(10, 19);
@@ -430,30 +470,18 @@ var Figure;
             var right_front_360 = _.range(70, 97);
             var left_crash = _.range(98, 119);
             var right_crash = _.range(121, 139);
-            var _action = "";
-            var action = "";
+            var action;
             var velocity = Math.round(body.GetLinearVelocity().x * 100) / 100;
             (velocity < 0) ? direction = "left" : direction = "right";
-            console.log("direction=" + direction);
             if (_action) {
                 action = direction.concat(_action);
             }
-            else {
-                action = direction;
-            }
-            console.log("action = " + action);
             switch (action) {
                 case "left":
-                    console.log("going to the left " + i);
-                    frame_count = 9;
                     sprite.gotoAndPlay(left[i]);
-                    i++;
                     break;
                 case "right":
-                    console.log("going to the right " + i);
-                    frame_count = 9;
                     sprite.gotoAndPlay(right[i]);
-                    i++;
                     break;
                 case "left_ollie":
                     frame_count = 14;
@@ -472,19 +500,90 @@ var Figure;
                     sprite.gotoAndPlay(right_front_360[i]);
                     break;
                 case "left_crash":
-                    frame_count = 18;
-                    sprite.gotoAndPlay(left_crash[i]);
+                    frame_count = 17;
+                    sprite.gotoAndStop(left_crash[i]);
                     break;
                 case "right_crash":
-                    frame_count = 18;
-                    sprite.gotoAndPlay(right_crash[i]);
+                    frame_count = 17;
+                    sprite.gotoAndStop(right_crash[i]);
                     break;
                 default:
                     sprite.gotoAndPlay(left[i]);
             }
-            i++;
-            if (i >= frame_count) {
-                i = 0;
+            frameCntr++;
+            if (frameCntr >= frame_count) {
+                frameCntr = 0;
+                _action = null;
+            }
+            var speed = body.GetLinearVelocity().x;
+            speed = Math.floor(speed);
+            speed = Math.abs(speed);
+            speed = this.p2m(speed);
+            stage.update();
+        };
+        FigureControl.prototype.animateSkateBoarder = function (event) {
+            var direction;
+            var deltaY = wheel2.GetPosition().y - wheel1.GetPosition().y;
+            var deltaX = wheel2.GetPosition().x - wheel1.GetPosition().x;
+            var rotationAngle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+            sprite.regX = 70;
+            sprite.regY = 125;
+            sprite.rotation = rotationAngle;
+            sprite.x = (body.GetPosition().x * 30);
+            sprite.y = (body.GetPosition().y * 30);
+            var i = frameCntr;
+            var frame_count = 9;
+            var left = _.range(0, 9);
+            var right = _.range(10, 19);
+            var left_ollie = _.range(20, 34);
+            var right_ollie = _.range(35, 49);
+            var left_front_360 = _.range(50, 69);
+            var right_front_360 = _.range(70, 97);
+            var left_crash = _.range(98, 119);
+            var right_crash = _.range(121, 139);
+            var action;
+            var velocity = Math.round(body.GetLinearVelocity().x * 100) / 100;
+            (velocity < 0) ? direction = "left" : direction = "right";
+            if (_action) {
+                action = direction.concat(_action);
+            }
+            switch (action) {
+                case "left":
+                    sprite.gotoAndPlay(left[i]);
+                    break;
+                case "right":
+                    sprite.gotoAndPlay(right[i]);
+                    break;
+                case "left_ollie":
+                    frame_count = 14;
+                    sprite.gotoAndPlay(left_ollie[i]);
+                    break;
+                case "right_ollie":
+                    frame_count = 14;
+                    sprite.gotoAndPlay(right_ollie[i]);
+                    break;
+                case "left_front_360":
+                    frame_count = 19;
+                    sprite.gotoAndPlay(left_front_360[i]);
+                    break;
+                case "right_front_360":
+                    frame_count = 19;
+                    sprite.gotoAndPlay(right_front_360[i]);
+                    break;
+                case "left_crash":
+                    frame_count = 17;
+                    sprite.gotoAndStop(left_crash[i]);
+                    break;
+                case "right_crash":
+                    frame_count = 17;
+                    sprite.gotoAndStop(right_crash[i]);
+                    break;
+                default:
+                    sprite.gotoAndPlay(left[i]);
+            }
+            frameCntr++;
+            if (frameCntr >= frame_count) {
+                frameCntr = 0;
                 _action = null;
             }
             var speed = body.GetLinearVelocity().x;
@@ -528,7 +627,7 @@ var Figure;
             wheelDef.position.x = x / this.scale;
             wheelDef.position.y = y / this.scale;
             var wheelFixDef = new b2d.b2FixtureDef;
-            wheelFixDef.density = 2.0;
+            wheelFixDef.density = 4.0;
             wheelFixDef.friction = 0.0;
             wheelFixDef.restitution = 0.3;
             wheelFixDef.shape = new b2s.b2CircleShape(0.4);
@@ -570,31 +669,45 @@ var Figure;
             sprite = new createjs.Sprite(snowboarderSpriteSheet);
             sprite.tickEnabled = true;
             stage.addChild(sprite);
-            createjs.Ticker.setFPS(10);
-            createjs.Ticker.on("tick", this.animate, sprite);
-            body = this.createSpritePlatform(x, y);
-            return sprite;
+            createjs.Ticker.setFPS(9);
+            createjs.Ticker.on("tick", this.animateSnowboarder, sprite);
+            var body = this.createSpritePlatform(x, y);
+            body.SetUserData(sprite);
+            return body;
+        };
+        FigureControl.prototype.createSkateboarder = function (x, y) {
+            var skateboarderSpriteSheetData = {
+                images: ["images/skateboarder.png"],
+                frames: {
+                    width: 145,
+                    height: 150,
+                    count: 140,
+                },
+                animations: {
+                    skater_left: [0, 9],
+                    skater_right: [10, 19],
+                    skater_left_trick1: [20, 34, "skater_left", 2],
+                    skater_right_trick1: [35, 49, "skater_right", 2],
+                    skater_left_trick2: [50, 69, "skater_left", 2],
+                    skater_right_trick2: [70, 97, "skater_right", 2],
+                    skater_left_crash: [98, 119, false],
+                    skater_right_crash: [121, 139, false]
+                }
+            };
+            var skateboarderSpriteSheet = new createjs.SpriteSheet(skateboarderSpriteSheetData);
+            sprite = new createjs.Sprite(skateboarderSpriteSheet);
+            sprite.tickEnabled = true;
+            stage.addChild(sprite);
+            createjs.Ticker.setFPS(9);
+            createjs.Ticker.on("tick", this.animateSkateBoarder, sprite);
+            var body = this.createSpritePlatform(x, y);
+            body.SetUserData(sprite);
+            return body;
         };
         return FigureControl;
     })();
     Figure.FigureControl = FigureControl;
 })(Figure || (Figure = {}));
-window.ondevicemotion = function (event) {
-    var accelerationX = event.accelerationIncludingGravity.x + "";
-    var accelerationY = event.accelerationIncludingGravity.y + "";
-    var accelerationZ = event.accelerationIncludingGravity.z + "";
-    var ralpha = event.rotationRate.alpha + "";
-    var rbeta = event.rotationRate.beta + "";
-    var rgamma = event.rotationRate.gamma + "";
-    var interval = event.interval + "";
-    document.getElementById("varx").innerHTML = accelerationX;
-    document.getElementById("vary").innerHTML = accelerationY;
-    document.getElementById("varz").innerHTML = accelerationZ;
-    document.getElementById("ralpha").innerHTML = ralpha;
-    document.getElementById("rbeta").innerHTML = rbeta;
-    document.getElementById("rgamma").innerHTML = rgamma;
-    document.getElementById("interval").innerHTML = interval;
-};
 window.addEventListener('load', function () {
     var canvas = document.getElementById('surface');
     canvas.width = (document.documentElement.offsetWidth - 150);
@@ -629,6 +742,7 @@ var SlopePhysics;
     var bodies = new Array();
     var surfaces = new Array();
     var surfacePoints = new Array();
+    var startingPoint;
     SlopePhysics.world;
     SlopePhysics.inEditMode = false;
     SlopePhysics.scale = 30;
@@ -638,11 +752,12 @@ var SlopePhysics;
             var _this = this;
             this.gravity = 9.81;
             this.createFigure = function () {
-                console.log('creating figure ....');
                 _this.removeBodies();
-                var x = 250;
-                var y = 50;
-                var sprite = SlopePhysics.figureControl.createSnowboarder(x, y);
+                var body = SlopePhysics.figureControl.createSkateboarder(startingPoint.x + 20, startingPoint.y - 10);
+                var sprite = body.GetUserData();
+                stage.addChild(sprite);
+                stage.update();
+                bodies.push(body);
             };
             this.createBall = function () {
                 console.log('curve control points = ' + SlopePhysics.curveControl.getCurvePoints().length);
@@ -672,6 +787,7 @@ var SlopePhysics;
                 }
                 stage.update();
             };
+            var that = this;
             this.canvas = canvas;
             context = canvas.getContext("2d");
             stage = new createjs.Stage(canvas);
@@ -684,26 +800,28 @@ var SlopePhysics;
             SlopePhysics.curveControl = new Curves.CurveControl('container', stageW, stageH);
             SlopePhysics.world = new b2d.b2World(new b2m.b2Vec2(0, this.gravity * 10), true);
             SlopePhysics.figureControl = new Figure.FigureControl(stage, SlopePhysics.world, SlopePhysics.scale);
+            $(window).resize(function () {
+                that.onResizeHandler();
+            });
+            $("#btnReload").on('click', function (e) {
+                that.createFigure();
+            });
+            $("#btnSettings").on('click', function (e) {
+                that.settings();
+            });
+            $("#btnDraw").on('click', function (e) {
+                that.createDrawnSurface();
+            });
+            $("#btnBezier").on('click', function (e) {
+                that.createBezierSurface();
+            });
+            $("#container").on('tap doubletap press', function (e) {
+                that.eventAction(e);
+            });
+            this.createContactListener();
             createjs.Ticker.setFPS(60);
             createjs.Ticker.useRAF = true;
             createjs.Ticker.addEventListener('tick', this.tick);
-            window.addEventListener("resize", this.onResizeHandler.bind(this), false);
-            window.addEventListener("orientationchange", this.onResizeHandler.bind(this), false);
-            var reloadButton = document.getElementById("btnReload");
-            reloadButton.addEventListener("click", this.createFigure.bind(this), false);
-            var settingsButton = document.getElementById("btnSettings");
-            settingsButton.addEventListener("click", this.settings.bind(this), false);
-            var drawButton = document.getElementById("btnDraw");
-            drawButton.addEventListener("click", this.createDrawnSurface.bind(this), false);
-            var bezierButton = document.getElementById("btnBezier");
-            bezierButton.addEventListener("click", this.createBezierSurface.bind(this), false);
-            window.addEventListener('deviceorientation', function (eventData) {
-                var LR = eventData.gamma;
-                var FB = eventData.beta;
-                var newXGravity = Math.round(LR / 2);
-                var newYGravity = Math.round(FB / 2);
-                SlopePhysics.world.SetGravity(new b2m.b2Vec2(newXGravity, newYGravity));
-            }, false);
         }
         Main.prototype.settings = function () {
             if (!SlopePhysics.inEditMode) {
@@ -711,13 +829,38 @@ var SlopePhysics;
             }
             SlopePhysics.inEditMode = !SlopePhysics.inEditMode;
         };
+        Main.prototype.createContactListener = function () {
+            var b2Listener = Box2D.Dynamics.b2ContactListener;
+            var listener = new b2Listener;
+            listener.BeginContact = function (contact) {
+            };
+            listener.EndContact = function (contact) {
+            };
+            listener.PostSolve = function (contact, impulse) {
+                if (contact.GetFixtureA().GetBody().GetUserData() == 'flat-surface' || contact.GetFixtureB().GetBody().GetUserData() == 'ball') {
+                    var impulseA = impulse.normalImpulses[0];
+                    var impulseB = impulse.normalImpulses[1];
+                    if (impulseA > 80.0) {
+                        SlopePhysics.figureControl.stopMotion();
+                        SlopePhysics.figureControl.setAction("_crash");
+                        console.log("impulseA = " + impulseA);
+                        console.log("impulseB = " + impulseB);
+                    }
+                }
+            };
+            listener.PreSolve = function (contact, oldManifold) {
+            };
+            SlopePhysics.world.SetContactListener(listener);
+        };
         Main.prototype.createDrawnSurface = function () {
             this.clearSurfaces();
             this.removeBodies();
+            this.createFlatSurface();
             var that = this;
             var listener = function (event) {
                 that.clearSurfaces();
                 var points = event.detail;
+                startingPoint = points[0];
                 that.setSurfacePoints(points);
             };
             document.addEventListener("pointEditListener", listener);
@@ -727,6 +870,7 @@ var SlopePhysics;
         Main.prototype.createBezierSurface = function () {
             this.removeBodies();
             this.clearSurfaces();
+            this.createFlatSurface();
             var width = this.canvas.width;
             var height = this.canvas.height;
             var pt1x = 0;
@@ -743,6 +887,7 @@ var SlopePhysics;
             controlPts[2] = new PolygonSubdivision.Point(pt3x, pt3y);
             controlPts[3] = new PolygonSubdivision.Point(pt4x, pt4y);
             var points = SlopePhysics.curveControl.drawBesizerCurve(controlPts);
+            startingPoint = points[0];
             this.setSurfacePoints(points);
         };
         Main.prototype.createFlatSurface = function () {
@@ -756,7 +901,7 @@ var SlopePhysics;
             surfaceFixtureDef.friction = 0.5;
             var shape = new b2s.b2PolygonShape();
             var width = stageW / SlopePhysics.scale;
-            var height = 20 / SlopePhysics.scale;
+            var height = 0;
             shape.SetAsBox(width, height);
             surfaceFixtureDef.shape = shape;
             var flatSurface = SlopePhysics.world.CreateBody(surfaceDef).CreateFixture(surfaceFixtureDef);
@@ -768,6 +913,18 @@ var SlopePhysics;
             draw();
             SlopePhysics.world.DrawDebugData();
             SlopePhysics.world.Step(1 / SlopePhysics.step, 10, 10);
+        };
+        Main.prototype.eventAction = function (e) {
+            console.log(e.type);
+            if (e.type == 'tap') {
+                SlopePhysics.figureControl.setAction("_ollie");
+            }
+            else if (e.type == 'doubletap') {
+                SlopePhysics.figureControl.setAction("_front_360");
+            }
+            else {
+                SlopePhysics.figureControl.impulse();
+            }
         };
         Main.prototype.changeGravity = function (value) {
             this.gravity = value * 10;
@@ -809,6 +966,7 @@ var SlopePhysics;
         Main.prototype.onResizeHandler = function (event) {
             if (event === void 0) { event = null; }
             this.removeBodies();
+            this.clearSurfaces();
             var width = (document.documentElement.offsetWidth - 25);
             var height = (document.documentElement.clientHeight - 150);
             stage.canvas.width = width;
@@ -821,6 +979,7 @@ var SlopePhysics;
                 var body = bodies.pop();
                 SlopePhysics.world.DestroyBody(body);
             }
+            stage.removeAllChildren();
             stage.update();
         };
         return Main;
@@ -912,7 +1071,6 @@ var SlopePhysics;
                         ctx.restore();
                     }
                     if (shapeType == b2s.b2Shape.e_polygonShape) {
-                        console.log('detected polygon');
                         var position = body.GetPosition();
                         var angle = body.GetAngle() * (180 / Math.PI);
                         var polygonShape = shape;

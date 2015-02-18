@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>TypeScript Box2D App</title>
+    <title>Jump!</title>
 
     <link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="./scripts/bootstrap/css/glyphicon.css">
@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="app.css" type="text/css" />
 
     <script src="./scripts/jquery-2.1.1.min.js"></script>
+    <script src="./scripts/jquery.finger-0.1.2.js"></script>
     <script src="./scripts/bootstrap/js/bootstrap.min.js"></script>
     <script src="./scripts/preloadjs-0.4.1.min.js"></script>
     <script src="./scripts/easeljs-0.7.1.min.js"></script>
@@ -23,14 +24,7 @@
     <script src="./scripts/kinetic-v5.1.0.min.js"></script>
     <script src="./scripts/underscore-1.7.0.min.js"></script>
     <script src="./scripts/bootstrap-slider.js"></script>
-
     <script src="app.js"></script>
-
-    <style>
-        #ex1Slider .slider-selection {
-            background: #BABABA;
-        }
-    </style>
 </head>
 <body>
     <div class="container-fluid">
@@ -42,7 +36,6 @@
                 <button id="btnDraw" class="btn btn-default"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button>
             </div>
             <div class="col-sm-2">
-
                 <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="horizontal" />
             </div>
             <div class="col-sm-8">
@@ -50,54 +43,27 @@
             </div>
         </div>
 
-        <div class="row voffset2">
+        <div class="row voffset4">
             <div class="col-sm-1">
-                X : <span id="varx"></span>
-            </div>
-            <div class="col-sm-1">
-                Y : <span id="vary"></span>
-            </div>
-            <div class="col-sm-1">
-                Z : <span id="varz"></span>
-            </div>
-            <div class="col-sm-1">
-               ralpha : <span id="ralpha"></span>
-            </div>
-            <div class="col-sm-1">
-                rgamma : <span id="rgamma"></span>
-            </div>
-            <div class="col-sm-1">
-                rbeta : <span id="rbeta"></span>
-            </div>
-            <div class="col-sm-1">
-                interval : <span id="interval"></span>
-            </div>
-            <div class="col-sm-5">
-               <!-- blank-->
+                <table class="table borderless">
+                    <tr class='borderless'>
+
+                        <td>
+                            <canvas id="surface" style="z-index:2;border: 1px solid grey"></canvas>
+                            <div id="container" style="z-index:1;position:absolute;left:20px;top:5px;"></div>
+                        </td>
+
+                        <td valign="middle" align="right">
+                            <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="vertical" />
+                        </td>
+
+                        <td valign="middle" align="left">
+                            <!-- blank -->
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
-
-            <div class="row voffset4">
-                <div class="col-sm-1">
-                    <table class="table borderless">
-                        <tr class='borderless'>
-
-                            <td>
-                                <canvas id="surface" style="z-index:1;border: 1px solid grey"></canvas>
-                                <div id="container" style="z-index:2;position:absolute;left:20px;top:5px;"></div>
-                            </td>
-
-                            <td valign="middle" align="right">
-                                <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="vertical" />
-                            </td>
-
-                            <td valign="middle" align="left">
-                                <!-- blank -->
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
+    </div>
 </body>
 </html>
