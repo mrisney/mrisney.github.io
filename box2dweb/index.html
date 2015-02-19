@@ -29,13 +29,25 @@
 <body>
     <div class="container-fluid">
         <div class="row voffset2">
-            <div class="col-sm-2">
+            <div class="col-sm-3">
                 <button id="btnReload" class="btn btn-default"><span class="glyphicon glyphicon-repeat" style="color:grey"></span></button>
                 <button id="btnSettings" class="btn btn-default"><span class="glyphicon glyphicon-cog" style="color:grey"></span></button>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        Figure <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#">Skateboarder</a></li>
+                        <li><a href="#">Snowboarder</a></li>
+                        <li><a href="#">Freestyle Skier</a></li>
+                    </ul>
+                </div>
                 <button id="btnBezier" class="btn btn-default"><span class="icon-curve" style="color:grey"></span></button>
                 <button id="btnDraw" class="btn btn-default"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button>
+
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-1">
                 <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="horizontal" />
             </div>
             <div class="col-sm-8">
