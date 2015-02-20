@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,33 +7,33 @@
 
     <title>Jump!</title>
 
-    <link rel="stylesheet" href="./scripts/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./scripts/bootstrap/css/glyphicon.css">
-    <link rel="stylesheet" href="./scripts/css/fontello.css">
-    <link rel="stylesheet" href="./scripts/css/bootstrap-slider.css">
+    <link rel="stylesheet" href="../scripts/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../scripts/bootstrap/css/glyphicon.css">
+    <link rel="stylesheet" href="../scripts/css/fontello.css">
+    <link rel="stylesheet" href="../scripts/css/bootstrap-slider.css">
     <link rel="stylesheet" href="app.css" type="text/css" />
 
-    <script src="./scripts/jquery-2.1.1.min.js"></script>
-    <script src="./scripts/jquery.finger-0.1.2.js"></script>
-    <script src="./scripts/bootstrap/js/bootstrap.min.js"></script>
-    <script src="./scripts/preloadjs-0.4.1.min.js"></script>
-    <script src="./scripts/easeljs-0.7.1.min.js"></script>
-    <script src="./scripts/soundjs-0.5.2.min.js"></script>
-    <script src="./scripts/tweenjs-0.5.1.min.js"></script>
-    <script src="./scripts/Box2dWeb-2.1.a.3.js"></script>
-    <script src="./scripts/kinetic-v5.1.0.min.js"></script>
-    <script src="./scripts/underscore-1.7.0.min.js"></script>
-    <script src="./scripts/bootstrap-slider.js"></script>
+    <script src="../scripts/jquery-2.1.1.min.js"></script>
+    <script src="../scripts/jquery.finger-0.1.2.js"></script>
+    <script src="../scripts/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../scripts/preloadjs-0.4.1.min.js"></script>
+    <script src="../scripts/easeljs-0.7.1.min.js"></script>
+    <script src="../scripts/soundjs-0.5.2.min.js"></script>
+    <script src="../scripts/tweenjs-0.5.1.min.js"></script>
+    <script src="../scripts/Box2dWeb-2.1.a.3.js"></script>
+    <script src="../scripts/kinetic-v5.1.0.min.js"></script>
+    <script src="../scripts/underscore-1.7.0.min.js"></script>
+    <script src="../scripts/bootstrap-slider.js"></script>
     <script src="app.js"></script>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row voffset2">
-            <div class="col-sm-3">
+            <div class="col-sm-4">
                 <button id="btnReload" class="btn btn-default"><span class="glyphicon glyphicon-repeat" style="color:grey"></span></button>
                 <button id="btnSettings" class="btn btn-default"><span class="glyphicon glyphicon-cog" style="color:grey"></span></button>
 
-                <div class="btn-group">
+                <div class="btn-group" id="figure-select" style="display:none">
                     <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                         Figure <span class="caret"></span>
                     </button>
@@ -44,39 +44,37 @@
                         <li><a href="#">Rolling Ball</a></li>
                     </ul>
                 </div>
-                <button id="btnBezier" class="btn btn-default"><span class="icon-curve" style="color:grey"></span></button>
-                <button id="btnDraw" class="btn btn-default"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button>
+                <button id="btnBezier" class="btn btn-default" style="display:none"><span class="icon-curve" style="color:grey"></span></button>
+                <button id="btnDraw" class="btn btn-default" style="display:none"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button><div id="line-slider" style="display:none;">
+    <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="20" data-slider-orientation="horizontal" />
+</div>
+                </div>
+                <div class="col-sm-8">
+                    <!-- blank-->
+                </div>
+            </div>
 
-            </div>
-            <div class="col-sm-1">
-                <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="horizontal" />
-            </div>
-            <div class="col-sm-8">
-                <!-- blank-->
+            <div class="row voffset4">
+                <div class="col-sm-1">
+                    <table class="table borderless">
+                        <tr class='borderless'>
+
+                            <td>
+                                <canvas id="canvas" style="z-index:2;"></canvas>
+                                <div id="container" style="z-index:1;position:absolute;left:20px;top:5px;"></div>
+                            </td>
+
+                            <td valign="middle" align="right" id="gravity-range-slider" style="display:none;">
+                                <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="1" data-slider-orientation="vertical" />
+                            </td>
+
+                            <td valign="middle" align="left">
+                                <!-- blank -->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
-
-        <div class="row voffset4">
-            <div class="col-sm-1">
-                <table class="table borderless">
-                    <tr class='borderless'>
-
-                        <td>
-                            <canvas id="canvas" style="z-index:2;"></canvas>
-                            <div id="container" style="z-index:1;position:absolute;left:20px;top:5px;"></div>
-                        </td>
-
-                        <td valign="middle" align="right">
-                            <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="0" data-slider-max="60" data-slider-step="1" data-slider-value="14" data-slider-orientation="vertical" />
-                        </td>
-
-                        <td valign="middle" align="left">
-                            <!-- blank -->
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
 </body>
 </html>

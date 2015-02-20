@@ -655,7 +655,7 @@ var Figure;
                 sprite.scaleY = .5;
                 sprite.tickEnabled = true;
                 container.addChild(sprite);
-                createjs.Ticker.setFPS(9);
+                createjs.Ticker.setFPS(7);
                 createjs.Ticker.on("tick", this.animateFigure, sprite);
                 body = this.createSpritePlatform(x, y);
                 body.SetUserData(sprite);
@@ -678,7 +678,9 @@ window.addEventListener('load', function () {
     canvas.width = (document.documentElement.offsetWidth - 150);
     canvas.height = (document.documentElement.clientHeight - 150);
     var slopePhysics = new SlopePhysics.Main(canvas);
-    var gravityRange = new Slider("#gravity-range");
+    var gravityRange = new Slider("#gravity-range", {
+        reversed: true
+    });
     gravityRange.on("slide", function (event) {
         slopePhysics.changeGravity(event.value);
     });
@@ -715,6 +717,7 @@ var SlopePhysics;
     var Main = (function () {
         function Main(canvas) {
             this.gravity = 9.81;
+            this.figure = "Skateboarder";
             this.createFigure = function (figure) {
                 console.log("stage number of children = " + stage.getNumChildren());
                 SlopePhysics.figureControl.removeFigure();
@@ -750,13 +753,18 @@ var SlopePhysics;
                 self.onResizeHandler();
             });
             $("#btnReload").on('click', function (e) {
+                self.createFigure(self.figure);
             });
             $("#btnSettings").on('click', function (e) {
-                self.settings();
+                $('#figure-select').toggle();
+                $('#btnBezier').toggle();
+                $('#btnDraw').toggle();
+                $('#line-slider').toggle();
+                $('#gravity-range-slider').toggle();
             });
             $(document).on('click', '.dropdown-menu li a', function () {
-                figure = $(this).text();
-                self.createFigure(figure);
+                self.figure = $(this).text();
+                self.createFigure(self.figure);
             });
             $("#btnDraw").on('click', function (e) {
                 self.createDrawnSurface();
@@ -767,8 +775,9 @@ var SlopePhysics;
             $("#container").on('tap doubletap press', function (e) {
                 self.eventAction(e);
             });
+            this.createBezierSurface();
             this.createContactListener();
-            createjs.Ticker.setFPS(60);
+            createjs.Ticker.setFPS(30);
             createjs.Ticker.useRAF = true;
             createjs.Ticker.addEventListener('tick', this.tick);
         }

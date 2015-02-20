@@ -1,0 +1,41 @@
+The majority of the Box2D demos seem to have a flat surface, or ground.
+I ran across a series of forum postings that should by first creating a bezier curve, 
+
+http://pomax.github.io/bezierinfo/
+
+
+
+var surfaceDef = new b2d.b2BodyDef();
+    surfaceDef.type = b2d.b2Body.b2_staticBody;
+    surfaceDef.userData = 'curved-surface';
+            
+var surfaceFixtureDef = new b2d.b2FixtureDef();
+    surfaceFixtureDef.density = 1;
+    surfaceFixtureDef.friction = 0.5;
+
+var shape = new b2s.b2PolygonShape();
+
+var x1, y1, x2, y2;
+var ptArray = new Array();
+var curvedSurface = world.CreateBody(surfaceDef);
+
+var ptOnCurve = points[0];
+x1 = this.p2m(ptOnCurve.x);
+y1 = this.p2m(ptOnCurve.y);
+
+for (var i = 1; i < points.length; i++) {
+     var pt = points[i];
+     x2 = this.p2m(pt.x);
+     y2 = this.p2m(pt.y);
+     
+     var edgeShape = new b2s.b2PolygonShape();
+         edgeShape.SetAsEdge(new b2m.b2Vec2(x1, y1), new b2m.b2Vec2(x2, y2));
+     
+     curvedSurface.CreateFixture2(edgeShape);
+     x1 = x2;
+     y1 = y2;
+ }
+ 
+ 
+ Taking it a step furthur. thats great for 
+            
