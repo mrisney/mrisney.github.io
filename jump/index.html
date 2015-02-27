@@ -28,53 +28,71 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row voffset2">
-            <div class="col-sm-4">
-                <button id="btnReload" class="btn btn-default"><span class="glyphicon glyphicon-repeat" style="color:grey"></span></button>
-                <button id="btnSettings" class="btn btn-default"><span class="glyphicon glyphicon-cog" style="color:grey"></span></button>
-
-                <div class="btn-group" id="figure-select" style="display:none">
-                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Figure <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href="#">Skateboarder</a></li>
-                        <li><a href="#">Snowboarder</a></li>
-                        <li><a href="#">Freestyle Skier</a></li>
-                        <li><a href="#">Rolling Ball</a></li>
-                    </ul>
-                </div>
-                <button id="btnBezier" class="btn btn-default" style="display:none"><span class="icon-curve" style="color:grey"></span></button>
-                <button id="btnDraw" class="btn btn-default" style="display:none"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button><div id="line-slider" style="display:none;">
-    <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="20" data-slider-orientation="horizontal" />
-</div>
-                </div>
-                <div class="col-sm-8">
-                    <!-- blank-->
-                </div>
+        <div class="row">
+            <div class="col-lg-1">
+                <table class="control-table">
+                    <tr>
+                        <td>
+                            <button id="btnReload" class="btn btn-default"><span class=" glyphicon glyphicon-repeat" style="color:grey"></span></button>
+                        </td>
+                        <td>
+                            <button id="btnSettings" class="btn btn-default"><span class="glyphicon glyphicon-cog" style="color:grey"></span></button>
+                        </td>
+                        <td>
+                            <div class="btn-group" id="figure-select" style="display:none">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    Figure <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><a href="#">Skateboarder</a></li>
+                                    <li><a href="#">Snowboarder</a></li>
+                                    <li><a href="#">Freestyle Skier</a></li>
+                                    <li><a href="#">Rolling Ball</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td>
+                            <button id="btnBezier" class="btn btn-default" style="display:none" data-toggle="tooltip" data-placement="bottom" data-original-title="bezier curve"><span class="icon-curve" style="color:grey"></span></button>
+                        </td>
+                        <td>
+                            <button id="btnDraw" class="btn btn-default" style="display:none" data-toggle="tooltip" data-placement="bottom" data-original-title="draw curve"><span class="glyphicon glyphicon-pencil" style="color:grey"></span></button>
+                        </td>
+                        <td style="padding: 10px;vertical-align:bottom">
+                            <div id="line-slider" style="display:none;" data-toggle="tooltip" data-placement="bottom" data-original-title="line simplification">
+                                <input id="line-simplification" data-slider-id="line-simplification-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="0" data-slider-orientation="horizontal" data-slider-tooltip="hide" />
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </div>
-
-            <div class="row voffset4">
-                <div class="col-sm-1">
-                    <table class="table borderless">
-                        <tr class='borderless'>
-
-                            <td>
-                                <canvas id="canvas" style="z-index:2;"></canvas>
-                                <div id="container" style="z-index:1;position:absolute;left:20px;top:5px;"></div>
-                            </td>
-
-                            <td valign="middle" align="right" id="gravity-range-slider" style="display:none;">
-                                <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="1" data-slider-orientation="vertical" />
-                            </td>
-
-                            <td valign="middle" align="left">
-                                <!-- blank -->
-                            </td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="col-lg-11">
+                <!-- blank -->
             </div>
         </div>
+        <div class="row voffset4">
+            <div class="col-sm-12">
+                <table class="table borderless">
+                    <tr class='borderless'>
+                        <td>
+                            <canvas id="canvas" style="z-index:2;"></canvas>
+                            <div id="container" style="z-index:1;position:absolute;left:20px;top:5px;"></div>
+                        </td>
+                        <td valign="middle" align="left">
+                            <!-- blank -->
+                        </td>
+                        <td valign="top" align="right" id="gravity-range-slider" style="display:none;" data-toggle="tooltip" data-placement="top" data-original-title="gravity">
+                            <input id="gravity-range" data-slider-id="gravity-range-data" type="text" data-slider-min="1" data-slider-max="20" data-slider-step="1" data-slider-value="1" data-slider-orientation="vertical" data-slider-tooltip="hide" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script id="bsJs" type="text/javascript">
+    $(document).ready(function () {
+        $('#btnBezier,#btnDraw,#line-slider,#gravity-range-slider').tooltip();
+
+    });
+    </script>
 </body>
 </html>
