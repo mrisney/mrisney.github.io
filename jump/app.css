@@ -55,8 +55,8 @@ input[type='range']::-moz-range-thumb {
 }
 
 .voffset  { margin-top: 2px; }
-.voffset1 { margin-top: 5px; }
-.voffset2 { margin-top: 10px; }
+.voffset1 { margin-top: 5px; white-space:nowrap; }
+.voffset2 { margin-top: 10px; white-space:nowrap;}
 .voffset3 { margin-top: 15px; }
 .voffset4 { margin-top: 30px; }
 .voffset5 { margin-top: 40px; }
@@ -76,6 +76,53 @@ input[type='range']::-moz-range-thumb {
 .hoffset8 { margin-left: 100px; }
 .hoffset9 { margin-left: 150px; }
 
-#ex1Slider .slider-selection {
-	background: #BABABA;
+
+.control-table {
+    border-collapse: separate;
+    border-spacing: 5px;
+}
+
+#line-simplification-data {
+	width: 100px; 
+}
+
+.tooltip.bottom .tooltip-inner {
+    background-color:#666666;
+    border-bottom-color: #666666;
+}
+
+.tooltip.bottom .tooltip-arrow {
+    border-bottom-color: #666666;
+}
+
+.tooltip.top .tooltip-inner {
+    background-color:#666666;
+    border-top-color: #666666;
+}
+
+.tooltip.top .tooltip-arrow {
+    border-top-color: #666666;
+}
+
+
+
+#gravity-range-data {
+    height: 200px;
+}
+
+#line-simplification-data .slider-selection {
+	background: #CCCCCC;
+}
+
+#line-simplification-data .slider-handle {
+	background: #666666;
+}
+
+
+#gravity-range-data .slider-selection {
+	background: #CCCCCC;
+}
+
+#gravity-range-data .slider-handle {
+	background:  #666666;
 }
